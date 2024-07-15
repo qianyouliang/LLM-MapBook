@@ -41,7 +41,13 @@ LLM-MapBook/
 │   │   ├── schemas.py
 │   │   └── ...
 │   ├── requirements.txt
+│   └── utils
+│       └── ...
+│   ├── .env
 │   └── ...
+├── LICENSE
+├── README.md
+└── ...
 ├── frontend/
 │   ├── public/
 │   ├── src/
