@@ -1,0 +1,6 @@
+geopy
+openai
+PyPDF2
+fastapi 
+pydantic 
+uvicorn

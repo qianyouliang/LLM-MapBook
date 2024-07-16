@@ -4,17 +4,23 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 
 class GeocodeUtils:
     def __init__(self, user_agent="geoapiExercises"):
+        """
+        初始化GeocodeUtils类，设置用户代理。
+        
+        Parameters:
+        user_agent (str): 用户代理字符串，默认为"geoapiExercises"。
+        """
         self.geolocator = Nominatim(user_agent=user_agent)
 
     def geocode(self, address):
         """
-        Geocode an address to get latitude and longitude.
+        地理编码一个地址以获取其纬度和经度。
         
         Parameters:
-        address (str): The address to geocode.
+        address (str): 要地理编码的地址。
         
         Returns:
-        dict: A dictionary containing latitude, longitude, and the full address.
+        dict: 包含纬度、经度和完整地址的字典。
         """
         try:
             location = self.geolocator.geocode(address)
@@ -31,14 +37,14 @@ class GeocodeUtils:
 
     def reverse_geocode(self, latitude, longitude):
         """
-        Reverse geocode latitude and longitude to get an address.
+        反向地理编码纬度和经度以获取地址。
         
         Parameters:
-        latitude (float): The latitude to reverse geocode.
-        longitude (float): The longitude to reverse geocode.
+        latitude (float): 要反向地理编码的纬度。
+        longitude (float): 要反向地理编码的经度。
         
         Returns:
-        dict: A dictionary containing the full address, latitude, and longitude.
+        dict: 包含完整地址、纬度和经度的字典。
         """
         try:
             location = self.geolocator.reverse((latitude, longitude), exactly_one=True)
@@ -52,18 +58,3 @@ class GeocodeUtils:
                 return {'error': 'Location not found'}
         except (GeocoderTimedOut, GeocoderServiceError) as e:
             return {'error': str(e)}
-
-# 使用案例
-if __name__ == "__main__":
-    geocode_utils = GeocodeUtils()
-
-    # 示例1: 地理编码
-    address = "华沙"
-    geocode_result = geocode_utils.geocode(address)
-    print(f"Geocode result for '{address}': {geocode_result}")
-
-    # 示例2: 逆地理编码
-    latitude = 37.4223096
-    longitude = -122.0846244
-    reverse_geocode_result = geocode_utils.reverse_geocode(latitude, longitude)
-    print(f"Reverse geocode result for ({latitude}, {longitude}): {reverse_geocode_result}")

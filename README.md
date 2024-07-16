@@ -84,6 +84,9 @@ LLM-MapBook/
 
 ### 前端
 
+- nodejs版本 16.20.2
+- WebPack版本 @vue/cli 5.0.8
+
 1. 进入前端目录：
    ```sh
    cd frontend
@@ -98,6 +101,8 @@ LLM-MapBook/
    ```sh
    npm run serve
    ```
+
+> 如果启动失败，可以`npm install @vue/cli 5.0.8` 后删除`nodeModule`再次`npm install`
 
 ## 使用说明
 
