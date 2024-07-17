@@ -89,7 +89,7 @@ LLM-MapBook/
 
 1. 进入前端目录：
    ```sh
-   cd frontend
+   cd frontend/llm-mapbook/
    ```
 
 2. 安装依赖：
