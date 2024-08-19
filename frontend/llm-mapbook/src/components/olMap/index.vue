@@ -3,20 +3,20 @@
 </template>
 
 <script>
-import 'ol/ol.css'; // 确保样式正确导入
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import VectorLayer from 'ol/layer/Vector';
-import OSM from 'ol/source/OSM';
-import VectorSource from 'ol/source/Vector';
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
-import Style from 'ol/style/Style';
-import CircleStyle from 'ol/style/Circle';
-import Fill from 'ol/style/Fill';
-import { fromLonLat } from 'ol/proj';
-import Vue from 'vue';
+import "ol/ol.css"; // 确保样式正确导入
+import Map from "ol/Map";
+import View from "ol/View";
+import TileLayer from "ol/layer/Tile";
+import VectorLayer from "ol/layer/Vector";
+import OSM from "ol/source/OSM";
+import VectorSource from "ol/source/Vector";
+import Feature from "ol/Feature";
+import Point from "ol/geom/Point";
+import Style from "ol/style/Style";
+import CircleStyle from "ol/style/Circle";
+import Fill from "ol/style/Fill";
+import { fromLonLat } from "ol/proj";
+import Vue from "vue";
 export default {
   data() {
     return {
@@ -54,7 +54,7 @@ export default {
       });
       Vue.prototype.$map = this.map;
     },
-    
+
     updateMap(coordinates) {
       this.vectorSource.clear();
       coordinates.forEach((coord) => {
