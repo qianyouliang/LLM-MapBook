@@ -1,123 +1,152 @@
 <template>
   <div class="home-page">
-    <div class="left-panel">
-      <el-card class="full-height-card">
-        <div slot="header" class="clearfix">
-          <span>阅读框</span>
-        </div>
-        <el-input
-          type="textarea"
-          :rows="35"
-          placeholder="粘贴文本或上传文件"
-          v-model="textInput"
-        >
-        </el-input>
-        <el-row type="flex" justify="start" class="button-row">
-          <el-col :span="8">
-            <el-upload
-              class="upload-demo"
-              action="/your-backend-endpoint"
-              :on-change="handleFileChange"
-              :auto-upload="false"
-            >
-              <el-button size="small" type="primary">点击上传</el-button>
-            </el-upload>
+    <el-container
+      style="height: 100%; margin: 0; overflow: hidden; border: 1px solid #000"
+    >
+      <!-- <el-aside width="20%" style="overflow: hidden !important; height:100vh !important;border:1px solid #000;">
+          
+        </el-aside> -->
+      <el-drawer title="应用设置" :visible.sync="drawer" :with-header="false">
+        <Aside />
+      </el-drawer>
+
+      <!-- 主内容区 -->
+      <el-main
+        style="
+          overflow: hidden !important;
+          height: 100vh !important;
+          border: 1px solid #000;
+          
+        "
+      >
+        <el-row class="header">
+          <div class="tool-bar">
+            <div class="settle" @click="drawer = true">
+              <i class="el-icon-setting"></i>
+            </div>
+          </div>
+        </el-row>
+        <el-row :gutter="10" class="map-container">
+          <el-col :span="6" class="event-container">
+            <el-card class="event-list">
+              <div slot="header" class="clearfix">事件列表</div>
+              <div
+                v-for="event in eventList"
+                :key="event.id"
+                class="event-item"
+              >
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="event.title"
+                  placement="top"
+                >
+                  <span>{{ truncatedTitle(event.title) }}</span>
+                </el-tooltip>
+                <el-button @click="showEvent(event)">查看</el-button>
+              </div>
+            </el-card>
           </el-col>
-          <el-col :span="8">
-            <el-button size="small" type="primary" @click="submitText"
-              >提交</el-button
-            >
-          </el-col>
-          <el-col :span="8">
-            <el-button size="small" type="primary" @click="showMap"
-              >展示</el-button
-            >
+          <el-col :span="18" class="map">
+            <el-card class="map-area">
+              <Map ref="mapComponent" />
+            </el-card>
           </el-col>
         </el-row>
-      </el-card>
-    </div>
-    <div class="right-panel">
-      <h2>地图页面</h2>
-      <Map />
-    </div>
+        <el-row>
+          <el-col :span="24">
+            <Chat />
+          </el-col>
+        </el-row>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
 <script>
 import Map from "@/components/olMap/index.vue";
-import { getGeojsonData } from "@/api/index.js";
+import Chat from "./components/chat-component.vue";
+import Aside from "./components/aside-component.vue";
+import { getEventList, processEvent } from "@/api/index.js";
+
 export default {
-  data() {
-    return {
-      textInput: "",
-    };
-  },
+  name: "Home",
   components: {
     Map,
+    Chat,
+    Aside,
   },
-  mounted() {},
+  data() {
+    return {
+      eventList: [],
+      drawer: false,
+    };
+  },
+  computed: {
+    parsedMarkdown() {
+      return marked(this.markdownContent);
+    },
+  },
   methods: {
-    handleFileChange(file, fileList) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.textInput = e.target.result;
-      };
-      reader.readAsText(file.raw);
-    },
-    submitText() {
-      // 这里可以调用后端API处理文本并获取地理坐标
-      // 假设获取到的坐标为 [[lon1, lat1], [lon2, lat2], ...]
-      const coordinates = [
-        [116.4074, 39.9042],
-        [121.4737, 31.2304],
-      ]; // 示例坐标
-      this.updateMap(coordinates);
-    },
-    submitUpload() {
-      if (!this.file) {
-        this.$message.warning("请先选择文件");
-        return;
-      }
-      const formData = new FormData();
-      formData.append("file", this.file);
-      this.getGeojsonData(formData);
-    },
-    showMap() {
-      // 展示地图的逻辑
+    showEvent(event) {
+      processEvent(event, this.geocodeType, this.apiKey, this.baiduKey).then(
+        (processedEvent) => {
+          this.$refs.mapComponent.addMarker(processedEvent);
+        }
+      );
     },
   },
 };
 </script>
 
-<style>
+<style lang="less" scoped>
 .home-page {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-}
-.left-panel {
-  flex: 1;
-  padding: 0.5vw;
-  height: 100%;
-  background-color: #f0f0f0;
-}
-.right-panel {
-  flex: 2;
-  padding: 0.5vw;
-  height: 100%;
-}
-.full-height-card {
   height: 100%;
   width: 100%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: #424242;
+
+  * {
+    overflow-y: hidden;
+  }
 }
-.full-height-card .el-card__body {
-  flex: 1;
-  overflow: auto;
+.header{
+  width: 100%;
+  height: 40px;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  position: relative;
+  .settle {
+  position: absolute;
+  top: 1vh;
+  right: 1.5vw;
 }
-.button-row {
-  margin-top: 10px;
+}
+
+.map-container {
+  display: flex;
+  width: 100%;
+  border: 1px solid #000;
+  .map{
+    padding: 0 !important;
+    margin:0;
+  }
+}
+.event-list,
+.map-area {
+  height: 50vh;
+}
+
+.event-item {
+  margin-bottom: 10px;
 }
 </style>

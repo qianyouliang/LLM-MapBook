@@ -1,12 +1,18 @@
-export const getGeojsonData = async (formData) => {
-    try {
-      const response = await axios.post('http://localhost:8000/uploadfile/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log('File uploaded successfully:', response.data);
-    } catch (error) {
-      console.error('There was an error uploading the file!', error);
-    }
-  };
+import axios from "axios";
+
+export function getEventList(content, modelType, apiKey) {
+  return axios.post("/api/get_event_list", {
+    content,
+    modelType,
+    apiKey,
+  });
+}
+
+export function processEvent(event, geocodeType, apiKey, baiduKey) {
+  return axios.post("/api/process_event", {
+    event,
+    geocodeType,
+    apiKey,
+    baiduKey,
+  });
+}

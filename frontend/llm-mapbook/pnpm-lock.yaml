@@ -17,18 +17,36 @@ dependencies:
   element-ui:
     specifier: ^2.15.14
     version: 2.15.14(vue@2.7.16)
+  github-markdown-css:
+    specifier: ^5.6.1
+    version: 5.6.1
+  highlight.js:
+    specifier: ^11.10.0
+    version: 11.10.0
   less:
     specifier: ^4.2.0
     version: 4.2.0
   less-loader:
     specifier: ^12.2.0
     version: 12.2.0(less@4.2.0)(webpack@5.93.0)
+  markdown-loader:
+    specifier: ^8.0.0
+    version: 8.0.0(webpack@5.93.0)
+  marked:
+    specifier: ^14.0.0
+    version: 14.0.0
   ol:
     specifier: ^9.2.4
     version: 9.2.4
   pdfjs-dist:
     specifier: ^4.4.168
     version: 4.4.168
+  scss:
+    specifier: ^0.2.4
+    version: 0.2.4
+  scss-loader:
+    specifier: ^0.0.1
+    version: 0.0.1
   vue:
     specifier: ^2.6.14
     version: 2.7.16
@@ -4416,6 +4434,11 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /github-markdown-css@5.6.1:
+    resolution: {integrity: sha512-DItLFgHd+s7HQmk63YN4/TdvLeRqk1QP7pPKTTPrDTYoI5x7f/luJWSOZxesmuxBI2srHp8RDyoZd+9WF+WK8Q==}
+    engines: {node: '>=10'}
+    dev: false
+
   /glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -4541,6 +4564,11 @@ packages:
   /highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
     dev: true
+
+  /highlight.js@11.10.0:
+    resolution: {integrity: sha512-SYVnVFswQER+zu1laSya563s+F8VDGt7o35d4utbamowvUNLLMovFqwCLSocpZTz3MgaSRA1IbqRWZv97dtErQ==}
+    engines: {node: '>=12.0.0'}
+    dev: false
 
   /hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -5203,6 +5231,28 @@ packages:
     dependencies:
       semver: 6.3.1
 
+  /markdown-loader@8.0.0(webpack@5.93.0):
+    resolution: {integrity: sha512-dxrR3WhK/hERbStPFb/yeNdEeWCKa2qUDdXiq3VTruBUWufOtERX04X0K44K4dnlN2i9pjSEzYIQJ3LjH0xkEw==}
+    engines: {node: '>=12.22.9'}
+    peerDependencies:
+      webpack: ^5.0.0
+    dependencies:
+      marked: 4.3.0
+      webpack: 5.93.0
+    dev: false
+
+  /marked@14.0.0:
+    resolution: {integrity: sha512-uIj4+faQ+MgHgwUW1l2PsPglZLOLOT1uErt06dAPtx2kjteLAkbsd/0FiYg/MGS+i7ZKLb7w2WClxHkzOOuryQ==}
+    engines: {node: '>= 18'}
+    hasBin: true
+    dev: false
+
+  /marked@4.3.0:
+    resolution: {integrity: sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==}
+    engines: {node: '>= 12'}
+    hasBin: true
+    dev: false
+
   /mdn-data@2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
     dev: true
@@ -5553,6 +5603,11 @@ packages:
       geotiff: 2.1.3
       pbf: 3.2.1
       rbush: 3.0.1
+    dev: false
+
+  /ometa@0.2.2:
+    resolution: {integrity: sha512-LZuoK/yjU3FvrxPjUXUlZ1bavCfBPqauA7fsNdwi+AVhRdyk2IzgP3JRnevvjzQ6fKHdUw8YISshf53FmpHrng==}
+    engines: {node: '>= 0.2.0'}
     dev: false
 
   /on-finished@2.4.1:
@@ -6527,6 +6582,17 @@ packages:
       ajv-formats: 2.1.1(ajv@8.17.1)
       ajv-keywords: 5.1.0(ajv@8.17.1)
     dev: true
+
+  /scss-loader@0.0.1:
+    resolution: {integrity: sha512-SbT/smRJjkvvdHSEdAYAplosVkrtaSwwgUlnQCOuDS5sOKNjrS/eYCMvKeV6+YxK5cCOCsOJZd3vltrXatFp+g==}
+    dev: false
+
+  /scss@0.2.4:
+    resolution: {integrity: sha512-4u8V87F+Q/upVhUmhPnB4C1R11xojkRkWjExL2v0CX2EXTg18VrKd+9JWoeyCp2VEMdSpJsyAvVU+rVjogh51A==}
+    engines: {node: '>= 0.2.0'}
+    dependencies:
+      ometa: 0.2.2
+    dev: false
 
   /select-hose@2.0.0:
     resolution: {integrity: sha512-mEugaLK+YfkijB4fx0e6kImuJdCIt2LxCRcbEYPqRGCs4F2ogyfZU5IAZRdjCP8JPq2AtdNoC/Dux63d9Kiryg==}

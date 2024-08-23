@@ -1,4 +1,7 @@
 const { defineConfig } = require("@vue/cli-service");
+const path = require("path");
+const CompressionPlugin = require("compression-webpack-plugin");
+
 module.exports = defineConfig({
   transpileDependencies: true,
 });
@@ -11,6 +14,7 @@ module.exports = {
     /* 设置为0.0.0.0则所有的地址均能访问 */
     host: "0.0.0.0",
     https: false,
+    contentBase:path.join(__dirname,'public'),
     client: {
       overlay: false,
     },
