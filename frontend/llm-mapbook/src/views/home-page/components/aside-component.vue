@@ -4,8 +4,8 @@
       <el-menu-item index="1" @click="toggleTab('settings')">
         应用设置
       </el-menu-item>
-      <el-menu-item index="2" @click="toggleTab('intro')"
-        >项目介绍
+      <el-menu-item index="2" @click="toggleTab('intro')">
+        项目介绍
       </el-menu-item>
     </el-menu>
     <div v-if="currentTab === 'settings'" class="tab-container">
@@ -14,6 +14,8 @@
           <div class="settle-title">模型类型：</div>
           <el-select v-model="localModelType" placeholder="选择模型类型">
             <el-option label="deepseek" value="deepseek"></el-option>
+            <el-option label="openai" value="openai"></el-option>
+            <el-option label="zhipu" value="zhipu"></el-option>
             <el-option label="ipex_llm" value="ipex_llm"></el-option>
           </el-select>
         </div>
@@ -51,17 +53,18 @@
         <el-upload
           class="upload-demo"
           drag
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :file-list="fileList"
+          action="http://localhost:8000/upload_file/"
           :on-change="handleFileChange"
+          :before-upload="beforeUpload"
+          :on-success="handleUploadSuccess"
           :auto-upload="false"
-          multiple
+          accept=".txt,.md,.pdf,.doc,.docx"
         >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">拖拽文件或<em>点击上传</em></div>
-          <div class="el-upload__tip" slot="tip">PDF或TXT格式</div>
+          <div class="el-upload__tip" slot="tip">
+            仅支持 TXT、Markdown、PDF 和 Word 文件
+          </div>
         </el-upload>
       </div>
     </div>
@@ -73,6 +76,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import { getEventList, processEvent} from "@/api/index.js";
 
 export default {
   data() {
@@ -95,10 +99,12 @@ export default {
       "geocodeType",
       "baiduKey",
     ]),
+    ...mapState("map", ["eventList"]),
     parsedMarkdown() {
       return marked(this.markdownContent);
     },
   },
+
   watch: {
     localUsername(newVal) {
       this.SET_USER_NAME(newVal);
@@ -123,7 +129,9 @@ export default {
       "SET_API_KEY",
       "SET_GEOCODE_TYPE",
       "SET_BAIDU_MAP_API",
+      "SET_IS_RAG",
     ]),
+    ...mapMutations("map", ["SET_EVENT_LIST"]),
     toggleTab(tabName) {
       this.currentTab = tabName;
     },
@@ -134,6 +142,27 @@ export default {
       };
       reader.readAsText(file.raw);
     },
+    beforeUpload(file) {
+      const isAllowedType = [".txt", ".md", ".pdf", ".doc", ".docx"].includes(
+        file.name.slice(file.name.lastIndexOf("."))
+      );
+      if (!isAllowedType) {
+        this.$message.error("上传文件类型不支持!");
+      }
+      return isAllowedType;
+    },
+    handleSuccess(response, file, fileList) {
+      console.log("上传成功:", response);
+      this.$message.success("文件上传成功!");
+
+      if (response.rag_status === "构建中") {
+        this.$message.info("RAG向量数据库正在构建中...");
+        // 可以在这里添加一个定时器，定期检查构建状态
+        this.checkRAGStatus(response.rag_status);
+      } else if (response.rag_status === "构建完成") {
+        this.$message.success("RAG向量数据库构建完成!");
+      }
+    },
     processFileContent(content) {
       getEventList(content, this.modelType, this.apiKey).then((events) => {
         this.events = events;
@@ -141,6 +170,30 @@ export default {
     },
     truncatedTitle(title) {
       return title.length > 6 ? title.substring(0, 6) + "..." : title;
+    },
+    showEvent(event) {
+      processEvent(event, this.geocodeType, this.apiKey, this.baiduKey).then(
+        (processedEvent) => {
+          this.$refs.mapComponent.addMarker(processedEvent);
+        }
+      );
+    },
+    checkRAGStatus(status) {
+      // 这里可以添加一个定时器，定期向后端查询RAG构建状态
+      if (!status) {
+        const interval = setInterval(() => {
+          // 假设有一个API `/check_rag_status` 用于查询RAG构建状态
+          checkRAGStatusAPI().then((status) => {
+            if (status === "构建完成") {
+              this.$message.success("RAG向量数据库构建完成!");
+              clearInterval(interval);
+            }
+          });
+        }, 5000);
+      } else {
+        return;
+      }
+      // 例如，每5秒查询一次
     },
   },
   created() {

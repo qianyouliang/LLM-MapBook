@@ -1,6 +1,5 @@
 const { defineConfig } = require("@vue/cli-service");
-const path = require("path");
-const CompressionPlugin = require("compression-webpack-plugin");
+// const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = defineConfig({
   transpileDependencies: true,
@@ -14,10 +13,20 @@ module.exports = {
     /* 设置为0.0.0.0则所有的地址均能访问 */
     host: "0.0.0.0",
     https: false,
-    contentBase:path.join(__dirname,'public'),
+    // contentBase:path.join(__dirname,'public'),
     client: {
       overlay: false,
     },
+    /* 配置代理，将 API 请求代理到后端服务器 */
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',  // 后端 API 地址
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''  // 将请求中的 '/api' 去掉，例如 '/api/user' -> '/user'
+        }
+      }
+    }
   },
   configureWebpack: {
     resolve: {
