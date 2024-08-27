@@ -53,10 +53,7 @@
         <el-upload
           class="upload-demo"
           drag
-          action="http://localhost:8000/upload_file/"
-          :on-change="handleFileChange"
-          :before-upload="beforeUpload"
-          :on-success="handleUploadSuccess"
+          action="/api/upload_file"
           :auto-upload="false"
           accept=".txt,.md,.pdf,.doc,.docx"
         >
@@ -76,7 +73,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import { getEventList, processEvent} from "@/api/index.js";
+import { processFile, checkRAGStatus, fileUpload } from "@/api/index.js";
 
 export default {
   data() {
@@ -136,11 +133,25 @@ export default {
       this.currentTab = tabName;
     },
     handleFileChange(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.processFileContent(e.target.result);
-      };
-      reader.readAsText(file.raw);
+      const formData = new FormData();
+      formData.append("uploaded_file", file.raw, file.name); // 直接使用 file.raw
+
+      fileUpload(formData)
+        .then((response) => {
+          console.log("上传成功:", response);
+          this.$message.success("文件上传成功!");
+
+          if (response.rag_status === "构建中") {
+            this.$message.info("RAG向量数据库正在构建中...");
+            this.checkRAGStatus(response.rag_status);
+          } else if (response.rag_status === "构建完成") {
+            this.$message.success("RAG向量数据库构建完成!");
+          }
+        })
+        .catch((error) => {
+          console.error("上传失败:", error);
+          this.$message.error("文件上传失败!");
+        });
     },
     beforeUpload(file) {
       const isAllowedType = [".txt", ".md", ".pdf", ".doc", ".docx"].includes(
@@ -151,7 +162,7 @@ export default {
       }
       return isAllowedType;
     },
-    handleSuccess(response, file, fileList) {
+    handleUploadSuccess(response, file, fileList) {
       console.log("上传成功:", response);
       this.$message.success("文件上传成功!");
 
@@ -163,21 +174,17 @@ export default {
         this.$message.success("RAG向量数据库构建完成!");
       }
     },
-    processFileContent(content) {
-      getEventList(content, this.modelType, this.apiKey).then((events) => {
-        this.events = events;
-      });
-    },
+
     truncatedTitle(title) {
       return title.length > 6 ? title.substring(0, 6) + "..." : title;
     },
-    showEvent(event) {
-      processEvent(event, this.geocodeType, this.apiKey, this.baiduKey).then(
-        (processedEvent) => {
-          this.$refs.mapComponent.addMarker(processedEvent);
-        }
-      );
-    },
+    // showEvent(event) {
+    //   processEvent(event, this.geocodeType, this.apiKey, this.baiduKey).then(
+    //     (processedEvent) => {
+    //       this.$refs.mapComponent.addMarker(processedEvent);
+    //     }
+    //   );
+    // },
     checkRAGStatus(status) {
       // 这里可以添加一个定时器，定期向后端查询RAG构建状态
       if (!status) {

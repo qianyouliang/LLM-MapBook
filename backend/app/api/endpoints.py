@@ -9,6 +9,7 @@ from models.rag import RAG
 from pydantic import BaseModel
 import asyncio
 import uuid
+import os
 
 router = APIRouter()
 
@@ -52,7 +53,7 @@ class RAGStatus(str, Enum):
 # 用于存储文件ID和RAG状态的全局字典
 rag_status_dict = {}
 
-@app.post("/upload_file/")
+@router.post("/upload_file/")
 async def upload_file(uploaded_file: UploadFile = File(...)):
     data_dir = './data'
     if not os.path.exists(data_dir):
@@ -70,7 +71,8 @@ async def upload_file(uploaded_file: UploadFile = File(...)):
     else:
         raise HTTPException(status_code=400, detail="文件上传失败")
 
-@app.post("/process_file/")
+
+@router.post("/process_file/")
 async def process_file(
     file_id: str = Form(...),
     model_type: str = Form(...),
@@ -127,7 +129,7 @@ async def process_file(
 
     return {"status": "success", "event_list_id": event_list_id, "rag_status": rag_status}
 
-@app.get("/check_rag_status/{file_id}")
+@router.get("/check_rag_status/{file_id}")
 async def check_rag_status(file_id: str):
     rag_status = rag_status_dict.get(file_id, RAGStatus.BUILDING)
     return {"rag_status": rag_status}

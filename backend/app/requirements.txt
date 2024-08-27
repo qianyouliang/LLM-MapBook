@@ -30,5 +30,5 @@ fastapi
 uvicorn
 python-multipart
 markdown
-docx
+python-docx
 uuid

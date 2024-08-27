@@ -7,7 +7,7 @@ const apiClient = axios.create({
 
 // 文件上传
 const fileUpload = (formData) => {
-  return apiClient.post('/api/upload_file/', formData);
+  return apiClient.post('/upload_file/', formData);
 }
 
 // 文件处理
